@@ -3,6 +3,9 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import splrep, splev
+import sys
+
+print(sys.argv)
 
 # Otevřeme soubor CSV v režimu čtení
 with open("C:\Test\A_00_3.csv", "r") as file:
@@ -55,14 +58,17 @@ dYdX = np.diff(smoothed_Y) / np.diff(X)
 # Přidáme první hodnotu derivace jako NaN, aby se zachovala délka polí
 dYdX = np.insert(dYdX, 0, np.nan)
 
-# Graf derivace
-ax2.plot(X, dYdX)
+# Maskování špičky v datech derivace
+mask = (dYdX > -20) & (dYdX < 20)  
+
+# Použití masky pro zachování pouze platných datových bodů
+filtered_dYdX = dYdX[mask]
+filtered_X = X[mask]
+
+# Vykreslení filtrovaných datových bodů derivace
+ax2.plot(filtered_X, filtered_dYdX)
 ax2.set_xlabel('deformace')
 ax2.set_ylabel('derivace')
 ax2.set_title('Průběh derivace')
-ax2.set_ylim(bottom=-40)
 
-# Přidáme titulek grafu
-plt.title("Graf Jablko A_00_3")
-# Zobrazíme graf
 plt.show()
